@@ -1,0 +1,41 @@
+service: serverless-wiki-crawler 
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: ${opt:stage, dev}
+  region: eu-west-1
+
+custom:
+  bucketPrefix: ${self:service}-${self:provider.stage}
+  buckets:
+    wikiBucketName: ${self:custom.bucketPrefix}-wiki-crawler 
+
+# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+       - "s3:*"
+      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", "${self:custom.buckets.wikiBucketName}" ] ] }
+   
+
+# here goes the functions
+functions:
+  wiki:
+    handler: handler.wiki
+    environment:
+      BUCKET_NAME: ${self:custom.buckets.wikiBucketName}
+    events:
+      - schedule: 
+          rate: rate(1 minute)
+          enabled: false
+          input:
+            lang: en
+        
+# you can add CloudFormation resource templates here
+resources:
+ Resources:
+   WikiBucket:
+     Type: AWS::S3::Bucket
+     Properties:
+       BucketName: ${self:custom.buckets.wikiBucketName}
