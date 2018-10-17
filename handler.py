@@ -1,19 +1,18 @@
+import boto3
 import json
 import logging
+import wiki
+
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.DEBUG)
 
 
-def hello(event, context):
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
-    }
+def wiki_crawler(event, context):
+    logger.debug('Event: {}'.format(event))
 
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
+    lang = event.get('lang')
+    logger.debug('Lang: {}'.format(lang))
 
-    return response
+    content = wiki.parse_main(lang)
+    logger.debug('Content: {}'.format(content))
 
-def wiki(event, context):
-    logging.warn('Event: {}'.format(event))
