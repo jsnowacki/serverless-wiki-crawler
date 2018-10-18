@@ -1,0 +1,4 @@
+boto3
+lxml
+beautifulsoup4
+wikipedia
