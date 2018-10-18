@@ -19,6 +19,7 @@ def parse_main_pl():
         "timestamp": datetime.datetime.now().isoformat(),
         "lang": "pl",
         "url": main_page.url,
+        "title": main_page.title,
         "content": {
             "news": news_day
         }

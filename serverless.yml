@@ -9,20 +9,23 @@ provider:
   region: eu-west-1
   environment:
     S3_CONTENT_TYPE: application/json
-
-custom:
-  bucketPrefix: ${self:service}-${self:provider.stage}
-  buckets:
-    wikiBucketName: ${self:custom.bucketPrefix}-wiki-crawler 
-
-# you can add statements to the Lambda function's IAM Role here
+  # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
       Resource: 
         - "arn:aws:s3:::${self:custom.buckets.wikiBucketName}/*"
-   
+
+plugins:
+   - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+  bucketPrefix: ${self:service}-${self:provider.stage}
+  buckets:
+    wikiBucketName: ${self:custom.bucketPrefix}-wiki-crawler 
 
 # here the functions go
 functions:
@@ -33,9 +36,9 @@ functions:
     events:
       - schedule: 
           rate: rate(1 minute)
-          enabled: false
+          enabled: true
           input:
-            lang: en
+            lang: pl
         
 # you can add CloudFormation resource templates here
 resources:
