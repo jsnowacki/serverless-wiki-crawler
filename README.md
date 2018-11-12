@@ -22,10 +22,12 @@ The way to fix Docker Toolbox daemon error is to set a number of environment var
 ```cmd
 SET DOCKER_TLS_VERIFY=1
 SET DOCKER_HOST=tcp://192.168.99.100:2376
-SET DOCKER_CERT_PATH=<your home path>\.docker\machine\machines\default
+SET DOCKER_CERT_PATH=%USERPROFILE%\.docker\machine\machines\default
 SET DOCKER_MACHINE_NAME=default
 SET COMPOSE_CONVERT_WINDOWS_PATHS=true
 ```
+
+`%USERPROFILE%` should point to your home directory (you can check it using `echo %USERPROFILE%`); if it is not set correctly, change manually to your home in `DOCKER_CERT_PATH` given above.
 
 The description is taken from https://www.mydatahack.com/resolving-docker-deamon-is-not-running-error-from-command-prompt/
 
@@ -33,31 +35,31 @@ The description is taken from https://www.mydatahack.com/resolving-docker-deamon
 
 To check the package content use:
 
-```
+```bash
 sls info
 ```
 
 To deploy the functions to AWS Lambda use the following command:
 
-```
+```bash
 sls deploy -v
 ```
 
 To test the function `wiki` you can do it in local mode:
 
-```
+```bash
 sls invoke local -f wiki -d "{\"lang\": \"pl\"}"
 ```
 
 of with the test file
 
-```
+```bash
 sls invoke local -f wiki -p tests/wiki_test.json
 ```
 
 Similarly, you can invoke deployed function on AWS Lambda:
 
-```
+```bash
 sls invoke -f wiki -p tests/wiki_test.json -l
 ```
 
@@ -65,6 +67,6 @@ Note that without `-l` the logging will not be shown.
 
 To see the logs from the deployed function `wiki` use the following command:
 
-```
+```bash
 sls logs -f wiki
 ```
