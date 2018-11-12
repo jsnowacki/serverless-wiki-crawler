@@ -13,6 +13,11 @@ s3_bucket_name = os.environ['S3_BUCKET_NAME']
 s3 = boto3.resource('s3')
 s3_bucket = s3.Bucket(s3_bucket_name)
 
+dynamodb_table_name = os.environ['DYBAMODB_TABLE_NAME']
+dynamodb = boto3.resource('dynamodb')
+
+dynamodb_table = dynamodb.Table(dynamodb_table_name)
+
 def wiki_crawler(event, context):
     logger.debug('Event: {}'.format(event))
 
@@ -30,3 +35,6 @@ def wiki_crawler(event, context):
     body = json.dumps(content)
     s3.Bucket(s3_bucket_name).put_object(Key=object_name, Body=body, ContentType=s3_content_type)
     logger.info('File {}/{} uploaded'.format(s3_bucket_name, object_name))
+
+    dynamodb_table.put_item(Item=content)
+    logger.info('Item put into table {}: {}'.format(dynamodb_table_name, content))
