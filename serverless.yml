@@ -27,7 +27,7 @@ plugins:
 
 custom:
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: false # use true or non-linux if you required compiled python packages, e.g. numpy
   s3:
     bucketPrefix: ${self:service}-${self:provider.stage}
     buckets:

@@ -76,3 +76,9 @@ To see the logs from the deployed function `wiki` use the following command:
 ```bash
 sls logs -f wiki
 ```
+
+### Note on building
+
+There are occasionally some issues with using `serverless-python-requirements` plugin using Docker, especially on Windows. You can use the plugin with option `dockerizePip: false` and use local Python (in this case executable `python3.6`) for zip creation; on Windows it is best to use Ubuntu for Windows, as the target image on AWS is Linux. 
+
+If you want to use Docker build, which is best if you use packages requiring compilation(e.g. `numpy`), set `dockerizePip: true`, on Windows `dockerizePip: non-linux`.
