@@ -15,6 +15,12 @@ To run this repo you'll need:
 7. For Windows 10 users it is useful to have Ubuntu for Windows https://tutorials.ubuntu.com/tutorial/tutorial-ubuntu-on-windows#0
 8. For deployment package builder it is good to have Docker installed (https://www.docker.com/get-started) along with Serverless Python Requirements Plugin (https://www.npmjs.com/package/serverless-python-requirements)
 
+To install required plugins type:
+
+```bash
+npm install 
+```
+
 ### Resolving Docker Toolbox Daemon Is Not Running Error (Windows)
 
 The way to fix Docker Toolbox daemon error is to set a number of environment variables, as follows:
