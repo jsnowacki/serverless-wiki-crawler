@@ -1,5 +1,6 @@
-__pycache__/
-.serverless/
+.git/
+*.pyc
+.serverless
 .vscode/
 node_modules/
 slides/
