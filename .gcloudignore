@@ -1,0 +1,9 @@
+.git/
+*.pyc
+.serverless
+.vscode/
+node_modules/
+slides/
+tests/
+serverless.yaml
+package*

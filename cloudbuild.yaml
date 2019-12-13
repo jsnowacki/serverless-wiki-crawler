@@ -1,0 +1,22 @@
+steps:
+  # build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}', '.']
+  # push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}']
+  # Deploy container image to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: 
+    [
+     'beta', 'run', 
+     'deploy', '${_SERVICE_NAME}', 
+     '--allow-unauthenticated',
+     '--image', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}', 
+     '--platform', 'managed',
+     '--region', '${_REGION}'
+    ]
+timeout: 900s
+substitutions:
+  _SERVICE_NAME: 'wiki-crawler'
+  _REGION: 'europe-west1'
