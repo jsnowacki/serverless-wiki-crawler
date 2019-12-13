@@ -11,6 +11,7 @@ steps:
     [
      'beta', 'run', 
      'deploy', '${_SERVICE_NAME}', 
+     '--allow-unauthenticated',
      '--image', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}', 
      '--platform', 'managed',
      '--region', '${_REGION}'
