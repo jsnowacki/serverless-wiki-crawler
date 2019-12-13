@@ -37,7 +37,7 @@ SET COMPOSE_CONVERT_WINDOWS_PATHS=true
 
 The description is taken from https://www.mydatahack.com/resolving-docker-deamon-is-not-running-error-from-command-prompt/
 
-## Usage
+## Serverless framework usage
 
 To check the package content use:
 
@@ -79,6 +79,80 @@ sls logs -f wiki
 
 ### Note on building
 
-There are occasionally some issues with using `serverless-python-requirements` plugin using Docker, especially on Windows. You can use the plugin with option `dockerizePip: false` and use local Python (in this case executable `python3.6`) for zip creation; on Windows it is best to use Ubuntu for Windows, as the target image on AWS is Linux. 
+There are occasionally some issues with using `serverless-python-requirements` plugin using Docker, especially on Windows. You can use the plugin with option `dockerizePip: false` and use local Python (in this case executable `python3.7`) for zip creation; on Windows it is best to use Ubuntu for Windows, as the target image on AWS is Linux. 
 
 If you want to use Docker build, which is best if you use packages requiring compilation(e.g. `numpy`), set `dockerizePip: true`, on Windows `dockerizePip: non-linux`.
+
+## Docker
+
+Alternatively, you can containerize your function using Docker as a web service, in this case using Flask. This can be used in many container orchestration systems like [Kubernetes](https://kubernetes.io/) and similar. Note that the service is simpler and just returns the crawled data; you need to handle data adding yourself either in the crawler service or as a separate service. See `app.py` and `Dockerfile` for details.
+
+To build the service on your machine use the build command, e.g.:
+
+```bash
+docker build -t wiki-crawler .
+```
+
+To run the service use the run command, e.g.:
+
+```bash
+docker run -p 8080:8080 wiki-crawler
+```
+
+You can push the image to the repository of your choosing if it works correctly, see [the documentation](https://docs.docker.com/engine/reference/commandline/push/) for details.
+
+## Google Cloud Run
+
+Recently number of providers added an option to run Docker containers in a serverless fashion. One of them is [Google Cloud Run](https://cloud.google.com/run/), which is effectively managed version of [Knative](https://knative.dev/). It allows for easy shipping of Docker containers, scales them up and down, even to 0, an allows for event triggering; see the respective products' documentation for details.
+
+Before deployment you need to build your image and ship it to a container registry, like the [Google Cloud](https://cloud.google.com/container-registry/) one.
+
+To use Google Cloud you need to register and get the account. Also, you need to get the Google Cloud SDK, see [the documentation](https://cloud.google.com/sdk/docs/quickstarts) for details.  
+
+Build the docker locally with the below naming scheme.
+
+```bash
+docker build -t gcr.io/$PROJECT_ID/wiki-crawler .
+```
+
+Where `PROJECT_ID` is your Google Cloud Project project ID; you can get it via Google Cloud SDK:
+
+```bash
+export PROJECT_ID=$(gcloud config get-value project)
+```
+
+You can test the image the same way as before locally; note the name change.
+
+```bash
+docker run -p 8080:8080 gcr.io/$PROJECT_ID/wiki-crawler
+```
+
+Before pushing the image the the registry you may need to setup the authentication for docker via the below command.
+
+```bash
+gcloud auth configure-docker
+```
+
+You should now be able to push the image to the registry using the command.
+
+```bash
+docker push gcr.io/$PROJECT_ID/wiki-crawler
+```
+
+To deploy the cloud run you need to use `gcloud`; see [quick start manual](https://cloud.google.com/run/docs/quickstarts/build-and-deploy) for details. To deployed the pushed image use the command as below; it will ask you few questions about the deployment.
+
+```bash
+gcloud beta run deploy wiki-crawler --image gcr.io/$PROJECT_ID/wiki-crawler
+```
+
+Alternatively, you can use the provided `cloudbuild.yaml` file, which is [Cloud Build](https://cloud.google.com/cloud-build/) config definition; see [the documentation](https://cloud.google.com/cloud-build/docs/) for details. To submit the build use the below command.
+
+```bash
+gcloud builds submit
+```
+
+To change the default substitution variables, type as follows, e.g. to change the service name:
+
+```bash
+gcloud builds submit --substitutions=_SERVICE_NAME=new-wiki-crawler
+```
