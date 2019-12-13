@@ -12,7 +12,7 @@ def crawl():
     if res is None:
         res = {"message": f"Error! Unsupported language {lang}"}
 
-    return jsonify, res
+    return jsonify(res)
 
 
 @app.route("/")
